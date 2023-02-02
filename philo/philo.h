@@ -20,8 +20,8 @@ typedef enum e_bool
 typedef struct s_philo
 {
 	unsigned int	id;
-	unsigned int	left_fork;
-	unsigned int	right_fork;
+	int				left_fork;
+	int				right_fork;
 	int				eat_count;
 	long			last_meal_ts;
 	pthread_t		thread_id;
@@ -41,7 +41,7 @@ typedef struct s_vars
 	int				all_eaten;
 	t_philo 		philos[250];
 	pthread_mutex_t forks[250];
-	pthread_mutex_t	meal_check;
+	pthread_mutex_t	eating;
 	pthread_mutex_t	log;
 } t_vars;
 

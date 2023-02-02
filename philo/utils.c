@@ -1,6 +1,5 @@
 #include "philo.h"
 
-// NEXT: atol function
 int	ft_atoi(const char *str)
 {
 	int		i;
@@ -60,7 +59,7 @@ void philo_print(t_vars *vars, unsigned int id, char *message)
 	if (!vars->death_count)
 	{
 		printf("%li ", timestamp() - vars->init_timestamp);
-		printf("Philosopher %u ", id + 1);
+		printf("%u ", id + 1);
 		printf("%s\n", message);
 	}
 	pthread_mutex_unlock(&(vars->log));
