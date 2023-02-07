@@ -1,6 +1,6 @@
 NAME	= philo
 CC		= gcc
-CFLAGS	= -Wall -Wextra -Werror -pthread
+CFLAGS	= -Wall -Wextra -Werror -pthread -fsanitize=thread -g3
 
 SRCS	= error.c main.c philo.c utils.c
 OBJS	= ${SRCS:.c=.o}

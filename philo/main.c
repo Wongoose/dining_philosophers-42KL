@@ -27,12 +27,12 @@ t_bool	init_vars(t_vars *vars, int argc, char **argv)
 
 // MUTEX is a locking mechanism, prevents 2 or more person to
 // access memory at the same time (threads)
-// Why MUTEX the forks? cuz each fork can only be held by 1 philo at any given time
+// Why MUTEX the forks? each fork can only be held by 1 philo at any given time
 // Why MUTEX the log? to prevent messy printf in the terminal
 // Why MUTEX eating? So a philo won't die while already eating (explain later)
 t_bool	init_mutex(t_vars *vars)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < vars->fork_num)
@@ -45,6 +45,8 @@ t_bool	init_mutex(t_vars *vars)
 		return (FALSE);
 	if (pthread_mutex_init(&(vars->eating), NULL))
 		return (FALSE);
+	if (pthread_mutex_init(&(vars->var_change), NULL))
+		return (FALSE);
 	return (TRUE);
 }
 
@@ -52,7 +54,7 @@ t_bool	init_mutex(t_vars *vars)
 // game haven't start (game starts when threads are created in start_philos())
 void	init_philosophers(t_vars *vars)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < vars->philo_num)
@@ -63,7 +65,10 @@ void	init_philosophers(t_vars *vars)
 		if (vars->fork_num == 1)
 			vars->philos[i].right_fork = -1;
 		else
-			vars->philos[i].right_fork = (vars->philo_num + i - 1) % vars->philo_num;
+		{
+			vars->philos[i].right_fork
+				= (vars->philo_num + i - 1) % vars->philo_num;
+		}
 		vars->philos[i].last_meal_ts = 0;
 		vars->philos[i].vars = vars;
 		i++;
@@ -74,18 +79,18 @@ void	init_philosophers(t_vars *vars)
 // input argument count is either 5 or 6 only [optional: num_of_times_to_eat]
 // starts running the game when initialization is complete
 // NOTE: result == FALSE means somewhere in the function has failed
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	t_vars vars;
+	t_vars	vars;
 
 	if (argc != 5 && argc != 6)
 		return (err_print("Invalid number of arguments!"));
-	if(init_vars(&vars, argc, argv) == FALSE)
+	if (init_vars(&vars, argc, argv) == FALSE)
 		return (err_print("Invalid argument values!"));
-	if(init_mutex(&vars) == FALSE)
+	if (init_mutex(&vars) == FALSE)
 		return (err_print("Failed to initialize mutexes!"));
 	init_philosophers(&vars);
-	if(start_philos(&vars) == FALSE)
+	if (start_philos(&vars) == FALSE)
 		return (err_print("Failed to initialize threads!"));
 	return (0);
 }

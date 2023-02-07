@@ -25,42 +25,55 @@ int	ft_atoi(const char *str)
 	return ((int)(result * sign));
 }
 
-long timestamp(void)
+long	timestamp(void)
 {
-	struct timeval instance;
+	struct timeval	instance;
 
 	gettimeofday(&instance, NULL);
 	return ((instance.tv_sec * 1000) + (instance.tv_usec / 1000));
 }
 
-long time_diff(long past, long pres)
+void	acknowledge_death(t_vars *vars, int id)
 {
-	return (pres - past);
+	philo_print(vars, id, "died");
+	pthread_mutex_lock(&(vars->var_change));
+	vars->death_count++;
+	pthread_mutex_unlock(&(vars->var_change));
 }
 
-void delay(long duration, t_vars *vars)
+void	delay(long duration, t_vars *vars)
 {
-	long i;
+	long	i;
 
 	i = timestamp();
-	while (!vars->death_count)
+	pthread_mutex_lock(&(vars->var_change));
+	if (vars->death_count)
 	{
-		if (time_diff(i, timestamp()) >= duration)
-			break;
+		pthread_mutex_unlock(&(vars->var_change));
+		return ;
+	} 
+	pthread_mutex_unlock(&(vars->var_change));
+	while (1)		
+	{
+		if (timestamp() - i >= duration)
+			break ;
 		usleep(50);
 	}
 }
 
 // Note: "\n" newline is needed to printf during realtime, else all
 // log will be stored in buffer until program completes
-void philo_print(t_vars *vars, unsigned int id, char *message)
+void	philo_print(t_vars *vars, unsigned int id, char *message)
 {
 	pthread_mutex_lock(&(vars->log));
+	pthread_mutex_lock(&(vars->var_change));
 	if (!vars->death_count)
 	{
+		pthread_mutex_unlock(&(vars->var_change));
 		printf("%li ", timestamp() - vars->init_timestamp);
-		printf("%u ", id + 1);
+		printf("Philosopher %u ", id + 1);
 		printf("%s\n", message);
 	}
+	pthread_mutex_unlock(&(vars->var_change));
 	pthread_mutex_unlock(&(vars->log));
 }
