@@ -17,11 +17,11 @@ t_bool	philo_eats(t_philo *philo)
 		return (FALSE);
 	pthread_mutex_lock(&(vars->forks[philo->right_fork]));
 	philo_print(vars, philo->id, "has taken a fork");
-	pthread_mutex_lock(&(vars->eating));
+	pthread_mutex_lock(&(philo->eating));
 	philo_print(vars, philo->id, "is eating");
 	philo->last_meal_ts = timestamp();
 	(philo->eat_count)++;
-	pthread_mutex_unlock(&(vars->eating));
+	pthread_mutex_unlock(&(philo->eating));
 	delay(vars->time_to_eat, vars);
 	pthread_mutex_unlock(&(vars->forks[philo->left_fork]));
 	pthread_mutex_unlock(&(vars->forks[philo->right_fork]));
@@ -66,33 +66,24 @@ void	death_checker(t_vars *vars, t_philo *philos)
 	while (!vars->all_eaten)
 	{
 		i = 0;
-		// pthread_mutex_lock(&(vars->var_change));
 		while (i < vars->philo_num && !vars->death_count)
 		{
-			// pthread_mutex_unlock(&(vars->var_change));
-			pthread_mutex_lock(&(vars->eating));
+			pthread_mutex_lock(&(philos[i].eating));
 			if (timestamp() - philos[i].last_meal_ts > vars->time_to_die)
 				acknowledge_death(vars, i);
 			usleep(100);
-			pthread_mutex_unlock(&(vars->eating));
-			// pthread_mutex_lock(&(vars->var_change));
+			pthread_mutex_unlock(&(philos[i].eating));
 			i++;
 		}
-		// pthread_mutex_unlock(&(vars->var_change));
 		if (vars->death_count)
 			break ;
-		i = 0;
-		pthread_mutex_lock(&(vars->eating));
-		while (vars->must_eat_count != -1 && i < vars->philo_num
-			&& philos[i].eat_count >= vars->must_eat_count)
-			i++;
-		pthread_mutex_unlock(&(vars->eating));
-		pthread_mutex_lock(&(vars->var_change));
-		if (i == vars->philo_num)
+		if (check_all_ate(vars, philos) == TRUE)
+		{
+			pthread_mutex_lock(&(vars->var_change));
 			vars->all_eaten = 1;
-		pthread_mutex_unlock(&(vars->var_change));
+			pthread_mutex_unlock(&(vars->var_change));
+		}
 	}
-
 }
 
 // End the program here.
@@ -105,9 +96,13 @@ void	end_philos(t_vars *vars, t_philo *philos)
 	while (i < vars->philo_num)
 		pthread_join(philos[i++].thread_id, NULL);
 	i = 0;
+	while (i < vars->philo_num)
+		pthread_mutex_destroy(&(philos[i++].eating));
+	i = 0;
 	while (i < vars->fork_num)
 		pthread_mutex_destroy(&(vars->forks[i++]));
 	pthread_mutex_destroy(&(vars->log));
+	pthread_mutex_destroy(&(vars->var_change));
 }
 
 // The TRUE start of the "game"
@@ -127,9 +122,9 @@ t_bool	start_philos(t_vars *vars)
 	{
 		if (pthread_create(&(philos[i].thread_id), NULL, routine, &(philos[i])))
 			return (FALSE);
-		pthread_mutex_lock(&(vars->eating));		
+		pthread_mutex_lock(&(philos[i].eating));
 		philos[i].last_meal_ts = timestamp();
-		pthread_mutex_unlock(&(vars->eating));		
+		pthread_mutex_unlock(&(philos[i].eating));
 		i++;
 	}
 	death_checker(vars, vars->philos);

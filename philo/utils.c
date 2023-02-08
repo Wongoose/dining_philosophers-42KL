@@ -51,9 +51,9 @@ void	delay(long duration, t_vars *vars)
 	{
 		pthread_mutex_unlock(&(vars->var_change));
 		return ;
-	} 
+	}
 	pthread_mutex_unlock(&(vars->var_change));
-	while (1)		
+	while (1)
 	{
 		if (timestamp() - i >= duration)
 			break ;
@@ -61,19 +61,23 @@ void	delay(long duration, t_vars *vars)
 	}
 }
 
-// Note: "\n" newline is needed to printf during realtime, else all
-// log will be stored in buffer until program completes
-void	philo_print(t_vars *vars, unsigned int id, char *message)
+t_bool	check_all_ate(t_vars *vars, t_philo *philos)
 {
-	pthread_mutex_lock(&(vars->log));
-	pthread_mutex_lock(&(vars->var_change));
-	if (!vars->death_count)
+	int	i;
+
+	i = 0;
+	while (vars->must_eat_count != -1 && i < vars->philo_num)
 	{
-		pthread_mutex_unlock(&(vars->var_change));
-		printf("%li ", timestamp() - vars->init_timestamp);
-		printf("Philosopher %u ", id + 1);
-		printf("%s\n", message);
+		pthread_mutex_lock(&(philos[i].eating));
+		if (philos[i].eat_count < vars->must_eat_count)
+		{
+			pthread_mutex_unlock(&(philos[i].eating));
+			break ;
+		}
+		pthread_mutex_unlock(&(philos[i].eating));
+		i++;
 	}
-	pthread_mutex_unlock(&(vars->var_change));
-	pthread_mutex_unlock(&(vars->log));
+	if (i == vars->philo_num)
+		return (TRUE);
+	return (FALSE);
 }

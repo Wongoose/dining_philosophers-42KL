@@ -24,6 +24,7 @@ typedef struct s_philo
 	int				eat_count;
 	long			last_meal_ts;
 	pthread_t		thread_id;
+	pthread_mutex_t	eating;
 	struct s_vars	*vars;
 }	t_philo;
 
@@ -48,9 +49,10 @@ typedef struct s_vars
 t_bool		start_philos(t_vars *vars);
 int			ft_atoi(const char *str);
 void		philo_print(t_vars *vars, unsigned int id, char *message);
+int			err_print(char *message);
 void		delay(long duration, t_vars *vars);
 long		timestamp(void);
 void		acknowledge_death(t_vars *vars, int id);
-int			err_print(char *message);
+t_bool		check_all_ate(t_vars *vars, t_philo *philos);
 
 #endif

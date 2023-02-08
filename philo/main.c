@@ -10,6 +10,7 @@ t_bool	init_vars(t_vars *vars, int argc, char **argv)
 	vars->time_to_die = ft_atoi(argv[2]);
 	vars->time_to_eat = ft_atoi(argv[3]);
 	vars->time_to_sleep = ft_atoi(argv[4]);
+	// NEXT: Add type validation (e.g. 4string)
 	vars->all_eaten = 0;
 	vars->death_count = 0;
 	if (vars->philo_num < 1 || vars->time_to_die < 0 || vars->time_to_eat < 0
@@ -43,8 +44,6 @@ t_bool	init_mutex(t_vars *vars)
 	}
 	if (pthread_mutex_init(&(vars->log), NULL))
 		return (FALSE);
-	if (pthread_mutex_init(&(vars->eating), NULL))
-		return (FALSE);
 	if (pthread_mutex_init(&(vars->var_change), NULL))
 		return (FALSE);
 	return (TRUE);
@@ -52,7 +51,7 @@ t_bool	init_mutex(t_vars *vars)
 
 // God is picturing the philosophers (loading...)
 // game haven't start (game starts when threads are created in start_philos())
-void	init_philosophers(t_vars *vars)
+t_bool	init_philosophers(t_vars *vars)
 {
 	int	i;
 
@@ -71,8 +70,11 @@ void	init_philosophers(t_vars *vars)
 		}
 		vars->philos[i].last_meal_ts = 0;
 		vars->philos[i].vars = vars;
+		if (pthread_mutex_init(&(vars->philos[i].eating), NULL))
+			return (FALSE);
 		i++;
 	}
+	return (TRUE);
 }
 
 // main initialize necessary variables (like loading the game...)
@@ -89,7 +91,8 @@ int	main(int argc, char **argv)
 		return (err_print("Invalid argument values!"));
 	if (init_mutex(&vars) == FALSE)
 		return (err_print("Failed to initialize mutexes!"));
-	init_philosophers(&vars);
+	if (init_philosophers(&vars) == FALSE)
+		return (err_print("Failed to initialize philosophers!"));
 	if (start_philos(&vars) == FALSE)
 		return (err_print("Failed to initialize threads!"));
 	return (0);
