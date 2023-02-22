@@ -1,6 +1,6 @@
 NAME	= philo
 CC		= gcc
-CFLAGS	= -Wall -Wextra -Werror -pthread
+CFLAGS	= -Wall -Wextra -Werror
 
 SRCS	= helper.c main.c philo.c utils.c
 OBJS	= ${SRCS:.c=.o}
