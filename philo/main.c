@@ -6,7 +6,7 @@
 /*   By: zwong <zwong@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:38:22 by zwong             #+#    #+#             */
-/*   Updated: 2023/02/22 14:38:22 by zwong            ###   ########.fr       */
+/*   Updated: 2023/02/22 14:56:02 by zwong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ t_bool	init_vars(t_vars *vars, int argc, char **argv)
 	vars->time_to_die = ft_atoi(argv[2]);
 	vars->time_to_eat = ft_atoi(argv[3]);
 	vars->time_to_sleep = ft_atoi(argv[4]);
-	// NEXT: Add type validation (e.g. 4string)
 	vars->all_eaten = 0;
 	vars->death_count = 0;
 	if (vars->philo_num < 1 || vars->time_to_die < 0 || vars->time_to_eat < 0
