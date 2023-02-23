@@ -6,7 +6,7 @@
 /*   By: zwong <zwong@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:38:29 by zwong             #+#    #+#             */
-/*   Updated: 2023/02/22 14:38:30 by zwong            ###   ########.fr       */
+/*   Updated: 2023/02/23 14:02:49 by zwong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ typedef struct s_vars
 	long			init_timestamp;
 	int				death_count;
 	int				all_eaten;
-	t_philo			philos[250];
-	pthread_mutex_t	forks[250];
+	t_philo			philos[200];
+	pthread_mutex_t	forks[200];
 	pthread_mutex_t	eating;
 	pthread_mutex_t	log;
 	pthread_mutex_t	var_change;

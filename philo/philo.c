@@ -6,7 +6,7 @@
 /*   By: zwong <zwong@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:38:27 by zwong             #+#    #+#             */
-/*   Updated: 2023/02/22 14:46:20 by zwong            ###   ########.fr       */
+/*   Updated: 2023/02/23 14:15:54 by zwong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,11 @@ void	death_checker(t_vars *vars, t_philo *philos)
 
 // End the program here.
 // Clear mutexes, no free() used
+// NOTE:
+// pthread_exit is called from the thread itself to terminate its
+// execution (and return a result) early.
+// pthread_join is called from another thread
+// (usually the thread that created it) to wait for a thread to terminate.
 void	end_philos(t_vars *vars, t_philo *philos)
 {
 	int	i;
@@ -122,6 +127,11 @@ void	end_philos(t_vars *vars, t_philo *philos)
 // Each thread has their own lives, running at the same time
 // death_checker() also runs in the main thread/program
 // so now we look into the lives of each philosopher
+// NOTE:
+// A process takes place in different memory spaces, whereas a thread
+// executes in the same memory space.
+// Even if one of them corrupts its own memory space, other processes
+// are not affected.
 t_bool	start_philos(t_vars *vars)
 {
 	int		i;

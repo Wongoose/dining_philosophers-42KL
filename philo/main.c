@@ -6,7 +6,7 @@
 /*   By: zwong <zwong@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 14:38:22 by zwong             #+#    #+#             */
-/*   Updated: 2023/02/22 14:56:02 by zwong            ###   ########.fr       */
+/*   Updated: 2023/02/23 14:15:22 by zwong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ t_bool	init_vars(t_vars *vars, int argc, char **argv)
 	vars->all_eaten = 0;
 	vars->death_count = 0;
 	if (vars->philo_num < 1 || vars->time_to_die < 0 || vars->time_to_eat < 0
-		|| vars->time_to_sleep < 0 || vars->philo_num > 250)
+		|| vars->time_to_sleep < 0 || vars->philo_num > 200)
 		return (FALSE);
 	vars->must_eat_count = -1;
 	if (argc == 6)
@@ -41,7 +41,7 @@ t_bool	init_vars(t_vars *vars, int argc, char **argv)
 // access memory at the same time (threads)
 // Why MUTEX the forks? each fork can only be held by 1 philo at any given time
 // Why MUTEX the log? to prevent messy printf in the terminal
-// Why MUTEX eating? So a philo won't die while already eating (explain later)
+// Why MUTEX var_changes? (explain later)
 t_bool	init_mutex(t_vars *vars)
 {
 	int	i;
